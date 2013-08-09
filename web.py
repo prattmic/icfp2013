@@ -31,6 +31,68 @@ class CloudApp(object):
 
         return json.loads(req.read())
 
+    def problems(self):
+        """
+        Get new problem instance
+
+        Returns:
+            List of Problem dictionaries.  See spec.
+
+        Raises:
+            HTTPError if there is a problem with the request.
+        """
+        return self._send_request('myproblems', {})
+
+    def eval(self, id=None, program=None, arguments=[]):
+        """
+        Evaluate a program.
+
+        Evaluates either a string program that is provided, or a program from
+        the server, specified by an id.
+
+        id XOR program must be specified
+
+        Args:
+            id: ID of program to evaluate provided by server
+            program: String program to evaluate
+            argument: List of arguments to evaluate on
+
+        Returns:
+            EvalResponse dictionary.  See spec.
+
+        Raises:
+            AttributeError if id XOR program not specified.
+            HTTPError if there is a problem with the request.
+        """
+        if (id and program) or (not id and not program):
+            raise AttributeError("Either id or program must be specified")
+
+        data = {'arguments': ["%#x" % n for n in arguments]}
+        if id:
+            data['id'] = id
+        if program:
+            data['program'] = program
+
+        return self._send_request('eval', data)
+
+    def guess(self, id, program):
+        """
+        Submit a guess for a program.
+
+        Args:
+            id: ID of program to submit guess for
+            program: String program to guess
+
+        Returns:
+            GuessResponse dictionary.  See spec.
+
+        Raises:
+            HTTPError if there is a problem with the request.
+        """
+        data = {'id': id, 'program': program}
+
+        return self._send_request('guess', data)
+
     def train(self, size, fold=None):
         """
         Get a training program
