@@ -19,5 +19,17 @@
 (define (shr16 x)
  (uint64 (arithmetic-shift (uint64 x) -16)))
 
+(define (and x y)
+ (bitwise-and (uint64 x) (uint64 y)))
+
+(define (or x y)
+ (bitwise-ior (uint64 x) (uint64 y)))
+
+(define (xor x y)
+ (bitwise-xor (uint64 x) (uint64 y)))
+
+(define (plus x y)
+ (uint64 (+ (uint64 x) (uint64 y))))
+
 ; Test
-(display (shr4 #xfffff))
+(display (plus #xffffffffffffffff 1))
