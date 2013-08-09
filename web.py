@@ -48,3 +48,15 @@ class CloudApp(object):
         data = { 'size': size, 'operators': [fold] if fold else [] }
 
         return self._send_request('train', data)
+
+    def status(self):
+        """
+        Get team statistics
+
+        Returns:
+            Status dictionary.  See spec.
+
+        Raises:
+            HTTPError if there is a problem with the request.
+        """
+        return self._send_request('status', {})
