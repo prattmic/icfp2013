@@ -31,5 +31,8 @@
 (define (plus x y)
  (uint64 (+ (uint64 x) (uint64 y))))
 
+(define (if0 t x y)
+ (if (= t 0) x y))
+
 ; Test
-(display (plus #xffffffffffffffff 1))
+(display (if0 0 0 1))
