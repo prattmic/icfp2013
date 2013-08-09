@@ -11,6 +11,26 @@ class CloudApp(object):
     def __init__(self):
         pass
 
+    def _send_request(self, req_type, data):
+        """
+        Send a request to the service and get a response.
+
+        Args:
+            req_type: Type of request to send (train, eval, status, etc)
+            data: Dictionary of data to send with request
+
+        Returns:
+            Dictionary of response from server.  In the format specified by
+            the spec for the given request type.
+
+        Raises:
+            HTTPError if there is a problem with the request
+        """
+        req = urllib2.urlopen("http://icfpc2013.cloudapp.net/%s?auth=%s" % (req_type, self.API_KEY),
+                              json.dumps(data))
+
+        return json.loads(req.read())
+
     def train(self, size, fold=None):
         """
         Get a training program
@@ -27,7 +47,4 @@ class CloudApp(object):
         """
         data = { 'size': size, 'operators': [fold] if fold else [] }
 
-        req = urllib2.urlopen("http://icfpc2013.cloudapp.net/train?auth=%s" % self.API_KEY,
-                              json.dumps(data))
-
-        return json.loads(req.read())
+        return self._send_request('train', data)
