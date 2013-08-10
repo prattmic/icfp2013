@@ -1,4 +1,12 @@
-#lang scheme
+#lang racket/base
+
+(require racket/string)
+(require racket/list)
+(provide main)
+
+; Create \BV namespace
+(define-namespace-anchor bv)
+(define ns (namespace-anchor->namespace bv))
 
 ; Stupid Scheme
 (define (uint64 x)
@@ -49,5 +57,13 @@
 (define (fold x init op)
  (foldl op init (byte-list (uint64 x))))
 
-; Test
-(display ((lambda (x) (fold x 0 (lambda (x y) (plus x y)))) #x0201))
+; Take string program as first argument, test cases as remaining arguments
+(define (main . xs)
+ ; Some magic to turn the string program into something that can be eval'd
+ ; It is eval'd into a procedure that can be run
+ ; It is eval'd in namespace 'ns', which contains everything in this file
+ (define prog (eval (read (open-input-string (first xs))) ns))
+ ; Map the rest of the arguements to numbers
+ (define inputs (map string->number (rest xs)))
+ ; Map the inputs to outputs of the program, display them
+ (display (map prog inputs)))
